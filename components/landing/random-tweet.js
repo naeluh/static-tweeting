@@ -3,7 +3,7 @@ import Link from 'next/link';
 import A from './anchor';
 import styles from './random-tweet.module.css';
 
-const APP_URL = 'https://static-tweet.now.sh';
+const APP_URL = 'http://localhost:3000';
 const cn = arr => arr.filter(Boolean).join(' ');
 
 function getRandomId(id, tweets) {

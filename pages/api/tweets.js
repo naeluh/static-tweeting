@@ -3,7 +3,7 @@ import fetch from '../../lib/fetch';
 const QUERY = 'javascript';
 const LANG = 'en';
 
-export default async function getTweets(req, res) {
+export default async function getTweets (req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).end();
@@ -11,16 +11,22 @@ export default async function getTweets(req, res) {
 
   if (!process.env.TWITTER_API_TOKEN) {
     return res.status(401).json({
-      errors: [{ message: 'A Twitter API token is required to execute this request' }],
+      errors: [
+        { message: 'A Twitter API token is required to execute this request' }
+      ]
     });
   }
+
+  console.log(
+    `https://api.twitter.com/1.1/search/tweets.json?q=${QUERY}&lang=${LANG}&count=50`
+  );
 
   const response = await fetch(
     `https://api.twitter.com/1.1/search/tweets.json?q=${QUERY}&lang=${LANG}&count=50`,
     {
       headers: {
-        authorization: `Bearer ${process.env.TWITTER_API_TOKEN}`,
-      },
+        authorization: `Bearer ${process.env.TWITTER_API_TOKEN}`
+      }
     }
   );
 
@@ -29,10 +35,15 @@ export default async function getTweets(req, res) {
     // Cache the Twitter response for 3 seconds, to avoid hitting the Twitter API limits
     // of 450 requests every 15 minutes (with app auth)
     res.setHeader('Cache-Control', 's-maxage=3, stale-while-revalidate');
-    res.status(200).json({ tweets: statuses.map(tweet => tweet.id_str) });
-  } else {
+    res.status(200).json({ tweets: statuses.map((tweet) => tweet.id_str) });
+  }
+  else {
     res.status(400).json({
-      errors: [{ message: `Fetch to the Twitter API failed with code: ${response.status}` }],
+      errors: [
+        {
+          message: `Fetch to the Twitter API failed with code: ${response.status}`
+        }
+      ]
     });
   }
 }
